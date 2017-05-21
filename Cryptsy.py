@@ -1,5 +1,5 @@
-import urllib
-import urllib2
+import urllib.request, urllib.parse, urllib.error
+import urllib.request, urllib.error, urllib.parse
 import json
 import time
 import hmac
@@ -18,14 +18,14 @@ class Api:
         if marketid is not None:
             request_url += '&marketid=%d' % marketid
 
-        rv = urllib2.urlopen(urllib2.Request(request_url))
+        rv = urllib.request.urlopen(urllib.request.Request(request_url))
         return json.loads(rv.read())
 
     def _api_query(self, method, request_data={}):
         """ Call to the "private" api and return the loaded json. """
         request_data['method'] = method
         request_data['nonce'] = int(round(time.time() * 1000))
-        post_data = urllib.urlencode(request_data)
+        post_data = urllib.parse.urlencode(request_data)
 
         signed_data = hmac.new(self.SECRET, post_data, hashlib.sha512)\
                           .hexdigest()
@@ -34,7 +34,7 @@ class Api:
             'Key': self.API_KEY
         }
 
-        rv = urllib2.urlopen(urllib2.Request('https://www.cryptsy.com/api',
+        rv = urllib.request.urlopen(urllib.request.Request('https://www.cryptsy.com/api',
                                              post_data,
                                              headers))
 
